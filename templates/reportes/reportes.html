@@ -1,0 +1,235 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Reportes y Estadísticas{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Estilos basados en preferencias del usuario: look premium, dark, blue/pink accents, glassmorphism */
+    .reportes-container {
+        font-family: 'Inter', sans-serif;
+    }
+    
+    .glass-card {
+        background: rgba(30, 41, 59, 0.7);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 1rem;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        color: #fff;
+        padding: 1.5rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .glass-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.4);
+        border-color: rgba(236, 72, 153, 0.3); /* Pink accent border */
+    }
+
+    .accent-blue {
+        color: #3b82f6; 
+    }
+    .accent-pink {
+        color: #ec4899;
+    }
+
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #3b82f6, #ec4899);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    /* Formularios modo dark / glass */
+    .glass-input {
+        background: rgba(15, 23, 42, 0.6) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        color: #fff !important;
+        border-radius: 0.5rem;
+        backdrop-filter: blur(4px);
+    }
+    
+    .glass-input:focus {
+        border-color: #ec4899 !important;
+        box-shadow: 0 0 0 0.25rem rgba(236, 72, 153, 0.25) !important;
+    }
+
+    .btn-gradient {
+        background: linear-gradient(135deg, #3b82f6, #ec4899);
+        color: white;
+        border: none;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        transition: opacity 0.3s ease;
+    }
+
+    .btn-gradient:hover {
+        opacity: 0.9;
+        color: white;
+    }
+
+    .table-glass {
+        color: #e2e8f0;
+    }
+    
+    .table-glass thead {
+        background: rgba(30, 41, 59, 0.9);
+        color: #fff;
+    }
+    
+    .table-glass tbody tr {
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .table-glass tbody tr:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container reportes-container py-4">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="font-weight-bold text-white mb-0" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
+            <i class="fas fa-chart-pie accent-pink me-2"></i> Dashboard de Reportes
+        </h1>
+        
+        <a href="{% url 'reservas:exportar_csv' %}?{{ filtros.query_string }}" class="btn btn-gradient px-4 py-2">
+            <i class="fas fa-file-csv me-2"></i> Exportar a CSV
+        </a>
+    </div>
+
+    <!-- Filtros -->
+    <div class="glass-card mb-5">
+        <h4 class="mb-3 text-white"><i class="fas fa-filter accent-blue me-2"></i> Filtros de Búsqueda</h4>
+        <form method="GET" action="{% url 'reservas:reportes' %}" class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label for="fecha_inicio" class="form-label text-light">Fecha Inicio</label>
+                <input type="date" class="form-control glass-input" id="fecha_inicio" name="fecha_inicio" value="{{ filtros.fecha_inicio }}">
+            </div>
+            <div class="col-md-3">
+                <label for="fecha_fin" class="form-label text-light">Fecha Fin</label>
+                <input type="date" class="form-control glass-input" id="fecha_fin" name="fecha_fin" value="{{ filtros.fecha_fin }}">
+            </div>
+            <div class="col-md-3">
+                <label for="laboratorio" class="form-label text-light">Laboratorio</label>
+                <select class="form-select glass-input" id="laboratorio" name="laboratorio">
+                    <option value="">Todos los laboratorios</option>
+                    {% for lab in laboratorios %}
+                        <option value="{{ lab.id }}" {% if filtros.laboratorio == lab.id %}selected{% endif %}>{{ lab.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="estado" class="form-label text-light">Estado</label>
+                <select class="form-select glass-input" id="estado" name="estado">
+                    <option value="">Todos</option>
+                    {% for choice_val, choice_label in estados %}
+                        <option value="{{ choice_val }}" {% if filtros.estado == choice_val %}selected{% endif %}>{{ choice_label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-1 text-end">
+                <button type="submit" class="btn btn-primary w-100 glass-input text-white" style="border-color: #3b82f6 !important;"><i class="fas fa-search"></i></button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Estadísticas Cards -->
+    <div class="row g-4 mb-5">
+        <!-- Card Cantidad Total -->
+        <div class="col-md-4">
+            <div class="glass-card h-100 text-center">
+                <h5 class="text-secondary fw-bold text-uppercase tracking-wide mb-3">Total Reservas</h5>
+                <div class="stat-value">{{ estadisticas.total_reservas }}</div>
+                <p class="text-muted mt-2 mb-0"><small>En el periodo filtrado</small></p>
+            </div>
+        </div>
+
+        <!-- Card Reservas por Estado -->
+        <div class="col-md-4">
+            <div class="glass-card h-100">
+                <h5 class="text-secondary fw-bold text-uppercase tracking-wide mb-3 align-items-center text-center">Estados</h5>
+                <ul class="list-group list-group-flush bg-transparent">
+                    {% for estado, total in estadisticas.reservas_por_estado.items %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent text-light border-0 px-0 py-1">
+                        <span class="text-capitalize">{{ estado }}</span>
+                        <span class="badge bg-secondary rounded-pill">{{ total }}</span>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item bg-transparent text-muted border-0 text-center">Sin datos</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Card Laboratorios más usados -->
+        <div class="col-md-4">
+            <div class="glass-card h-100">
+                <h5 class="text-secondary fw-bold text-uppercase tracking-wide mb-3 text-center">Top Laboratorios</h5>
+                <ul class="list-group list-group-flush bg-transparent">
+                    {% for item in estadisticas.laboratorios_mas_usados %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent text-light border-0 px-0 py-1">
+                        <span class="text-truncate me-2" style="max-width: 150px;">{{ item.laboratorio }}</span>
+                        <span class="badge" style="background-color: #ec4899;">{{ item.total }} res</span>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item bg-transparent text-muted border-0 text-center">Sin datos</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vista de Datos -->
+    <div class="glass-card">
+        <h4 class="mb-4 text-white"><i class="fas fa-list accent-blue me-2"></i> Detalle de Reservas (Top 50)</h4>
+        <div class="table-responsive">
+            <table class="table table-hover table-glass align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Usuario</th>
+                        <th>Laboratorio</th>
+                        <th>Fecha</th>
+                        <th>Horario</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reserva in reservas_list %}
+                    <tr>
+                        <td>#{{ reserva.id }}</td>
+                        <td>{{ reserva.usuario.get_full_name|default:reserva.usuario.username }}</td>
+                        <td>{{ reserva.laboratorio.nombre }}</td>
+                        <td>{{ reserva.fecha|date:"d/m/Y" }}</td>
+                        <td>{{ reserva.hora_inicio|time:"H:i" }} - {{ reserva.hora_fin|time:"H:i" }}</td>
+                        <td>
+                            <span class="badge bg-{{ reserva.get_estado_display_badge }}">{{ reserva.get_estado_display }}</span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-4">No se encontraron reservas con los filtros actuales.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- Ajustar un fondo global oscuro al main content específico si la página no lo tiene -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.body.style.backgroundColor = "#0f172a"; // slate-900 background compatible con premium dark
+        // Solo para esta página de forma inline
+    });
+</script>
+{% endblock %}

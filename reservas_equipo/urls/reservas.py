@@ -16,6 +16,8 @@ from reservas_equipo.views import (
     ReservasAdministracionListView,
     AprobarReservaView,
     RechazarReservaView,
+    ReportesView,
+    ExportarCSVView,
 )
 
 app_name = 'reservas'
@@ -67,5 +69,19 @@ urlpatterns = [
         '<int:pk>/rechazar/',
         RechazarReservaView.as_view(),
         name='reserva_rechazar'
+    ),
+    
+    # ========================================================================
+    # RUTAS REPORTES - Estadísticas y exportaciones
+    # ========================================================================
+    path(
+        'reportes/',
+        ReportesView.as_view(),
+        name='reportes'
+    ),
+    path(
+        'reportes/exportar/',
+        ExportarCSVView.as_view(),
+        name='exportar_csv'
     ),
 ]

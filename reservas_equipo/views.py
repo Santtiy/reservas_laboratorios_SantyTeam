@@ -400,3 +400,62 @@ class RechazarReservaView(AdministradorMixin, DetailView):
     def get(self, request, *args, **kwargs):
         """GET redirige, solo POST es válido."""
         return self.post(request, *args, **kwargs)
+
+from django.http import HttpResponse
+from .reportes import generar_estadisticas, generar_csv_reservas, obtener_reservas_filtradas
+
+class ReportesView(AdministradorMixin, TemplateView):
+    """
+    Vista para visualización de estadísticas y generación de reportes.
+    Accesible solo para Administradores.
+    """
+    template_name = 'reportes/reportes.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # Obtener Filtros
+        fecha_inicio = self.request.GET.get('fecha_inicio')
+        fecha_fin = self.request.GET.get('fecha_fin')
+        laboratorio_id = self.request.GET.get('laboratorio')
+        estado = self.request.GET.get('estado')
+
+        # Obtener queryset filtrado centralizadamente
+        queryset = obtener_reservas_filtradas(fecha_inicio, fecha_fin, laboratorio_id, estado)
+        
+        # Generar estadísticas
+        context['estadisticas'] = generar_estadisticas(queryset)
+        context['laboratorios'] = Laboratorio.objects.all()
+        context['estados'] = Reserva.ESTADO_CHOICES
+        context['reservas_list'] = queryset[:50]  # Limite para la tabla de visualización
+        
+        # Pasar valores de filtro al template para mantener estado
+        context['filtros'] = {
+            'fecha_inicio': fecha_inicio or '',
+            'fecha_fin': fecha_fin or '',
+            'laboratorio': int(laboratorio_id) if laboratorio_id and laboratorio_id.isdigit() else '',
+            'estado': estado or '',
+            'query_string': self.request.GET.urlencode(),
+        }
+        
+        return context
+
+class ExportarCSVView(AdministradorMixin, View):
+    """
+    Vista para exportar la lista filtrada a CSV.
+    """
+    def get(self, request, *args, **kwargs):
+        fecha_inicio = self.request.GET.get('fecha_inicio')
+        fecha_fin = self.request.GET.get('fecha_fin')
+        laboratorio_id = self.request.GET.get('laboratorio')
+        estado = self.request.GET.get('estado')
+
+        queryset = obtener_reservas_filtradas(fecha_inicio, fecha_fin, laboratorio_id, estado)
+
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = f'attachment; filename="reporte_reservas_{datetime.now().strftime("%Y%m%d_%H%M")}.csv"'
+        
+        generar_csv_reservas(queryset, response)
+        
+        return response
+
