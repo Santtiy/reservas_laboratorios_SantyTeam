@@ -19,7 +19,9 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-
+IDEAS/
+*.md
+!README.md
 # Entorno Virtual
 venv/
 ENV/
