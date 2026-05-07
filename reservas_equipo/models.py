@@ -49,11 +49,11 @@ class Reserva(models.Model):
     def clean(self):
         """Validación de la integridad de la reserva."""
         # Validar que hora_fin > hora_inicio
-        if self.hora_fin <= self.hora_inicio:
+        if self.hora_inicio and self.hora_fin and self.hora_fin <= self.hora_inicio:
             raise ValidationError("La hora de fin debe ser mayor a la hora de inicio.")
         
         # Validar que no sea una fecha pasada
-        if self.fecha < timezone.now().date() and self.pk is None:
+        if self.fecha and self.fecha < timezone.now().date() and self.pk is None:
             raise ValidationError("No puedes reservar para fechas pasadas.")
 
         # Validar solapamiento de reservas: mismo laboratorio y misma fecha

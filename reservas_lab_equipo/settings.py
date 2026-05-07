@@ -122,6 +122,6 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 
 # Authentication URLs
-LOGIN_URL = 'login'
+LOGIN_URL = 'auth:login'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'

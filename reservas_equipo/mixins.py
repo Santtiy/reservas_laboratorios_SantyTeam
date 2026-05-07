@@ -41,7 +41,7 @@ class RoleRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
     def dispatch(self, request, *args, **kwargs):
         """Intercepta la solicitud y valida permisos."""
         if not request.user.is_authenticated:
-            return redirect('login')
+            return redirect('auth:login')
         
         if not self.test_func():
             if self.show_message:
@@ -147,7 +147,7 @@ class PropietarioReservaMixin(LoginRequiredMixin, UserPassesTestMixin):
                 '❌ No tienes permiso para modificar esta reserva. '
                 'Solo puedes editar tus propias reservas.'
             )
-        return redirect('reserva_list')
+        return redirect('reservas:reserva_list')
 
 
 class SoloAdministradorMixin(AdministradorMixin):
@@ -189,7 +189,7 @@ class PermisionRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
     def dispatch(self, request, *args, **kwargs):
         """Intercepta y valida permisos."""
         if not request.user.is_authenticated:
-            return redirect('login')
+            return redirect('auth:login')
         
         if not self.test_func():
             if self.show_message:
