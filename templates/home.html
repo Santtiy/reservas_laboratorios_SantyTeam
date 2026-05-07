@@ -3,41 +3,60 @@
 {% block title %}Inicio - Sistema de Reservas{% endblock %}
 
 {% block content %}
-<div class="container">
-    {% if user.is_authenticated %}
-        <!-- Bienvenida para usuario logueado -->
-        <div class="row mb-5">
-            <div class="col-md-8">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body">
-                        <h1 class="card-title">
-                            <i class="fas fa-wave-hand"></i> Bienvenido, {{ user.first_name|default:user.username }}
-                        </h1>
-                        <p class="card-text text-muted">
-                            Gestiona tus reservas de laboratorios de manera eficiente.
-                        </p>
-                    </div>
-                </div>
+<!-- Hero Section -->
+<div class="bg-primary text-white pb-5 pt-4 mb-5 shadow-sm" style="margin-top: -2.5rem; background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);">
+    <div class="container py-4">
+        <div class="row align-items-center">
+            <div class="col-lg-8 text-center text-lg-start">
+                {% if user.is_authenticated %}
+                    <h1 class="display-4 fw-bold mb-3">
+                        Hola, {{ user.first_name|default:user.username }} <i class="fas fa-hand-sparkles text-warning ms-2"></i>
+                    </h1>
+                    <p class="lead text-white-50 mb-0">
+                        Bienvenido al sistema de reservas. Gestiona tus laboratorios de manera rápida y eficiente.
+                    </p>
+                {% else %}
+                    <h1 class="display-4 fw-bold mb-3">
+                        Reservas de <span class="text-warning">Laboratorios</span>
+                    </h1>
+                    <p class="lead text-white-50 mb-4">
+                        Sistema integral para la gestión y asignación de espacios de laboratorio.
+                    </p>
+                    <a href="{% url 'auth:login' %}" class="btn btn-warning btn-lg rounded-pill px-5 shadow-sm fw-bold">
+                        Comenzar Ahora <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                {% endif %}
+            </div>
+            <div class="col-lg-4 d-none d-lg-block text-center">
+                <i class="fas fa-microscope text-white opacity-25" style="font-size: 10rem;"></i>
             </div>
         </div>
-        
+    </div>
+</div>
+
+<div class="container">
+    {% if user.is_authenticated %}
         <!-- Estadísticas Rápidas -->
-        <div class="row mb-4">
-            <div class="col-md-3 mb-3">
-                <div class="card text-center border-0 shadow-sm">
-                    <div class="card-body">
-                        <i class="fas fa-calendar-alt fa-2x text-primary mb-2"></i>
-                        <h5 class="card-title">Total de Reservas</h5>
-                        <p class="card-text fs-4 fw-bold">{{ total_reservas }}</p>
+        <div class="row mb-5">
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="card border-0 h-100" style="background: linear-gradient(45deg, #eff6ff, #dbeafe);">
+                    <div class="card-body position-relative overflow-hidden">
+                        <div class="position-absolute end-0 top-0 mt-3 me-3 opacity-25">
+                            <i class="fas fa-calendar-check fa-4x text-primary"></i>
+                        </div>
+                        <h6 class="text-primary fw-bold text-uppercase mb-2" style="letter-spacing: 0.05em">Total Reservas</h6>
+                        <h2 class="display-5 fw-bold text-dark mb-0">{{ total_reservas|default:"0" }}</h2>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
-                <div class="card text-center border-0 shadow-sm">
-                    <div class="card-body">
-                        <i class="fas fa-clock fa-2x text-warning mb-2"></i>
-                        <h5 class="card-title">Pendientes</h5>
-                        <p class="card-text fs-4 fw-bold">{{ reservas_pendientes }}</p>
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="card border-0 h-100" style="background: linear-gradient(45deg, #fef3c7, #fef08a);">
+                    <div class="card-body position-relative overflow-hidden">
+                        <div class="position-absolute end-0 top-0 mt-3 me-3 opacity-25">
+                            <i class="fas fa-clock fa-4x text-warning"></i>
+                        </div>
+                        <h6 class="text-warning fw-bold text-uppercase mb-2" style="letter-spacing: 0.05em">Pendientes</h6>
+                        <h2 class="display-5 fw-bold text-dark mb-0">{{ reservas_pendientes|default:"0" }}</h2>
                     </div>
                 </div>
             </div>
@@ -45,36 +64,47 @@
         
         <!-- Próximas Reservas -->
         {% if proximas_reservas %}
-            <div class="row mb-4">
+            <div class="row mb-5">
                 <div class="col-12">
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-header bg-light">
-                            <h5 class="mb-0">
-                                <i class="fas fa-list"></i> Próximas Reservas Aprobadas
-                            </h5>
-                        </div>
-                        <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4 class="fw-bold mb-0">
+                            <i class="fas fa-list-ul text-primary me-2"></i> Próximas Reservas Aprobadas
+                        </h4>
+                        <a href="{% url 'reservas:reserva_list' %}" class="btn btn-outline-primary btn-sm rounded-pill px-3">Ver Todas</a>
+                    </div>
+                    
+                    <div class="card border-0">
+                        <div class="card-body p-0">
                             <div class="table-responsive">
-                                <table class="table table-hover mb-0">
-                                    <thead class="table-light">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="bg-light">
                                         <tr>
-                                            <th>Laboratorio</th>
+                                            <th class="ps-4">Laboratorio</th>
                                             <th>Fecha</th>
-                                            <th>Hora</th>
-                                            <th>Acciones</th>
+                                            <th>Horario</th>
+                                            <th class="text-end pe-4">Acciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {% for reserva in proximas_reservas %}
                                             <tr>
-                                                <td>
-                                                    <strong>{{ reserva.laboratorio }}</strong>
+                                                <td class="ps-4">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="bg-primary bg-opacity-10 text-primary rounded p-2 me-3">
+                                                            <i class="fas fa-flask"></i>
+                                                        </div>
+                                                        <span class="fw-bold text-dark">{{ reserva.laboratorio }}</span>
+                                                    </div>
                                                 </td>
-                                                <td>{{ reserva.fecha|date:"d/m/Y" }}</td>
-                                                <td>{{ reserva.hora_inicio }} - {{ reserva.hora_fin }}</td>
                                                 <td>
-                                                    <a href="{% url 'reservas:reserva_detail' reserva.pk %}" class="btn btn-sm btn-info">
-                                                        <i class="fas fa-eye"></i>
+                                                    <span class="badge bg-light text-dark border"><i class="far fa-calendar-alt text-muted me-1"></i> {{ reserva.fecha|date:"d/m/Y" }}</span>
+                                                </td>
+                                                <td>
+                                                    <span class="text-muted"><i class="far fa-clock me-1"></i> {{ reserva.hora_inicio|time:"H:i" }} - {{ reserva.hora_fin|time:"H:i" }}</span>
+                                                </td>
+                                                <td class="text-end pe-4">
+                                                    <a href="{% url 'reservas:reserva_detail' reserva.pk %}" class="btn btn-sm btn-light text-primary rounded-circle shadow-sm" style="width: 32px; height: 32px; padding: 0; line-height: 32px;" title="Ver detalle">
+                                                        <i class="fas fa-chevron-right"></i>
                                                     </a>
                                                 </td>
                                             </tr>
@@ -89,65 +119,72 @@
         {% endif %}
         
         <!-- Acciones Rápidas -->
-        <div class="row">
-            <div class="col-md-6">
-                <a href="{% url 'reservas:reserva_list' %}" class="btn btn-primary btn-lg w-100">
-                    <i class="fas fa-list"></i> Ver Todas mis Reservas
+        <div class="row mb-4">
+            <h4 class="fw-bold mb-4">Acciones Rápidas</h4>
+            <div class="col-md-6 mb-3">
+                <a href="{% url 'reservas:reserva_list' %}" class="card border-0 bg-white text-decoration-none h-100 shadow-sm" style="transition: transform 0.3s; transform-origin: center;">
+                    <div class="card-body d-flex align-items-center p-4">
+                        <div class="bg-primary bg-gradient text-white rounded-circle d-flex align-items-center justify-content-center me-4 shadow-sm" style="width: 60px; height: 60px;">
+                            <i class="fas fa-list fa-2x"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold text-dark mb-1">Mis Reservas</h5>
+                            <p class="text-muted mb-0 small">Revisar historial y estados</p>
+                        </div>
+                        <i class="fas fa-arrow-right ms-auto text-muted"></i>
+                    </div>
                 </a>
             </div>
-            <div class="col-md-6">
-                <a href="{% url 'reservas:reserva_create' %}" class="btn btn-success btn-lg w-100">
-                    <i class="fas fa-plus"></i> Nueva Reserva
+            <div class="col-md-6 mb-3">
+                <a href="{% url 'reservas:reserva_create' %}" class="card border-0 bg-white text-decoration-none h-100 shadow-sm" style="transition: transform 0.3s; transform-origin: center;">
+                    <div class="card-body d-flex align-items-center p-4">
+                        <div class="bg-success bg-gradient text-white rounded-circle d-flex align-items-center justify-content-center me-4 shadow-sm" style="width: 60px; height: 60px;">
+                            <i class="fas fa-plus fa-2x"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold text-dark mb-1">Nueva Reserva</h5>
+                            <p class="text-muted mb-0 small">Solicitar laboratorio</p>
+                        </div>
+                        <i class="fas fa-arrow-right ms-auto text-muted"></i>
+                    </div>
                 </a>
             </div>
         </div>
     {% else %}
-        <!-- Landing para usuario no autenticado -->
-        <div class="row justify-content-center">
-            <div class="col-md-8 text-center">
-                <div class="mb-5">
-                    <i class="fas fa-flask fa-5x text-primary mb-4" style="display: block;"></i>
-                    <h1 class="display-4 fw-bold mb-4">Sistema de Reservas de Laboratorios</h1>
-                    <p class="lead text-muted mb-4">
-                        Gestiona de manera eficiente tus reservas de laboratorios.
-                    </p>
-                </div>
-                
-                <!-- Features -->
-                <div class="row mb-5">
-                    <div class="col-md-4 mb-3">
-                        <div class="card border-0 shadow-sm h-100">
-                            <div class="card-body">
-                                <i class="fas fa-calendar-check fa-3x text-success mb-3"></i>
-                                <h5 class="card-title">Reservas Fáciles</h5>
-                                <p class="card-text">Reserva laboratorios de forma rápida y sencilla</p>
-                            </div>
+        <!-- Features Cards for Non-authenticated -->
+        <div class="row mb-5 text-center mt-5">
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 h-100 bg-transparent">
+                    <div class="card-body">
+                        <div class="bg-success bg-opacity-10 text-success rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                            <i class="fas fa-calendar-check fa-3x"></i>
                         </div>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <div class="card border-0 shadow-sm h-100">
-                            <div class="card-body">
-                                <i class="fas fa-lock fa-3x text-info mb-3"></i>
-                                <h5 class="card-title">Seguro</h5>
-                                <p class="card-text">Tus datos están protegidos y seguros</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <div class="card border-0 shadow-sm h-100">
-                            <div class="card-body">
-                                <i class="fas fa-chart-pie fa-3x text-warning mb-3"></i>
-                                <h5 class="card-title">Estadísticas</h5>
-                                <p class="card-text">Visualiza tus reservas y estadísticas</p>
-                            </div>
-                        </div>
+                        <h5 class="fw-bold">Gestión Dinámica</h5>
+                        <p class="text-muted">Consulta la disponibilidad de laboratorios en tiempo real.</p>
                     </div>
                 </div>
-                
-                <!-- CTA -->
-                <a href="{% url 'auth:login' %}" class="btn btn-primary btn-lg px-5">
-                    <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
-                </a>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 h-100 bg-transparent">
+                    <div class="card-body">
+                        <div class="bg-info bg-opacity-10 text-info rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                            <i class="fas fa-lock fa-3x"></i>
+                        </div>
+                        <h5 class="fw-bold">Seguridad Total</h5>
+                        <p class="text-muted">Aprobación centralizada y control estricto de accesos.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 h-100 bg-transparent">
+                    <div class="card-body">
+                        <div class="bg-warning bg-opacity-10 text-warning rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                            <i class="fas fa-chart-pie fa-3x"></i>
+                        </div>
+                        <h5 class="fw-bold">Estadísticas</h5>
+                        <p class="text-muted">Historial completo y exportación de datos con un clic.</p>
+                    </div>
+                </div>
             </div>
         </div>
     {% endif %}

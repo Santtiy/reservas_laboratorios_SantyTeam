@@ -1,16 +1,40 @@
 /* ============================================================================
    Sistema de Gestión de Reservas de Laboratorios
-   Estilos Base - Diseño limpio y profesional
+   Estilos Base - Diseño limpio, moderno y profesional
    ============================================================================ */
 
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
 :root {
-    --primary-color: #0d6efd;
-    --success-color: #198754;
-    --danger-color: #dc3545;
-    --warning-color: #ffc107;
-    --info-color: #0dcaf0;
-    --light-bg: #f8f9fa;
-    --dark-text: #212529;
+    /* Paleta de colores principal */
+    --primary-color: #2563eb;
+    --primary-hover: #1d4ed8;
+    --success-color: #10b981;
+    --danger-color: #ef4444;
+    --warning-color: #f59e0b;
+    --info-color: #3b82f6;
+    
+    /* Fondos y textos */
+    --light-bg: #f3f4f6;
+    --white-bg: #ffffff;
+    --dark-text: #1f2937;
+    --muted-text: #6b7280;
+    
+    /* Sombras y bordes */
+    --border-color: #e5e7eb;
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    
+    /* Transiciones */
+    --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-normal: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ============================================================================
@@ -18,54 +42,110 @@
    ============================================================================ */
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
     background-color: var(--light-bg);
     color: var(--dark-text);
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
 }
 
 main {
     flex: 1;
-    padding: 2rem 0;
+    padding: 2.5rem 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--dark-text);
+    font-weight: 700;
+    letter-spacing: -0.025em;
 }
 
 /* ============================================================================
-   Navbar
+   Navbar Premium
    ============================================================================ */
 
 .navbar {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: #111827 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 1rem 0;
+    box-shadow: var(--shadow-md);
 }
 
 .navbar-brand {
-    font-size: 1.5rem;
-    font-weight: 700;
-    transition: opacity 0.3s ease;
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: #f9fafb !important;
+    transition: var(--transition-fast);
+}
+
+.navbar-brand i {
+    color: var(--info-color);
+    margin-right: 0.5rem;
 }
 
 .navbar-brand:hover {
-    opacity: 0.8;
+    color: var(--white-bg) !important;
+    opacity: 0.9;
 }
 
 .navbar-nav .nav-link {
-    margin-right: 0.5rem;
-    transition: all 0.3s ease;
+    font-weight: 500;
+    color: #d1d5db !important;
+    padding: 0.5rem 1rem;
+    margin: 0 0.25rem;
+    border-radius: var(--radius-md);
+    transition: var(--transition-fast);
 }
 
-.navbar-nav .nav-link:hover {
-    color: rgba(255, 255, 255, 0.8) !important;
+.navbar-nav .nav-link i {
+    opacity: 0.7;
+    margin-right: 0.35rem;
+    transition: var(--transition-fast);
+}
+
+.navbar-nav .nav-link:hover, .navbar-nav .nav-link.active {
+    color: var(--white-bg) !important;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.navbar-nav .nav-link:hover i {
+    opacity: 1;
 }
 
 .btn-outline-light {
-    border: 2px solid rgba(255, 255, 255, 0.5);
-    transition: all 0.3s ease;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    font-weight: 600;
+    border-radius: var(--radius-md);
+    padding: 0.5rem 1.25rem;
+    transition: var(--transition-fast);
 }
 
 .btn-outline-light:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-color: white;
+    background-color: var(--white-bg);
+    color: #111827;
+    border-color: var(--white-bg);
+}
+
+.dropdown-menu {
+    border: none;
+    box-shadow: var(--shadow-lg);
+    border-radius: var(--radius-md);
+    padding: 0.5rem;
+}
+
+.dropdown-item {
+    border-radius: var(--radius-sm);
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    transition: var(--transition-fast);
+}
+
+.dropdown-item:hover {
+    background-color: var(--light-bg);
+    color: var(--primary-color);
 }
 
 /* ============================================================================
@@ -73,41 +153,151 @@ main {
    ============================================================================ */
 
 .card {
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    transition: all 0.3s ease;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    background-color: var(--white-bg);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition-normal);
+    overflow: hidden;
 }
 
 .card:hover {
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
-    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-4px);
 }
 
 .card-header {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    background-color: rgba(0, 0, 0, 0.02);
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--white-bg);
+    padding: 1.25rem 1.5rem;
 }
 
 /* ============================================================================
-   Formularios
+   Formularios y Botones
    ============================================================================ */
 
 .form-control,
 .form-select {
-    border: 1px solid #e0e0e0;
-    border-radius: 0.375rem;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    background-color: #f9fafb;
+    transition: var(--transition-fast);
 }
 
 .form-control:focus,
 .form-select:focus {
+    background-color: var(--white-bg);
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
 }
 
 .form-label {
-    font-weight: 500;
-    margin-bottom: 0.5rem;
+    font-weight: 600;
+    margin-bottom: 0.6rem;
     color: var(--dark-text);
+    font-size: 0.9rem;
+}
+
+.invalid-feedback {
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-top: 0.25rem;
+}
+
+.btn {
+    font-weight: 600;
+    padding: 0.6rem 1.5rem;
+    border-radius: var(--radius-md);
+    transition: var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.btn-success {
+    background-color: var(--success-color);
+    border-color: var(--success-color);
+}
+
+.btn-success:hover {
+    background-color: #059669;
+    border-color: #059669;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+/* ============================================================================
+   Tablas y Listados
+   ============================================================================ */
+
+.table {
+    margin-bottom: 0;
+}
+
+.table th {
+    font-weight: 600;
+    color: var(--muted-text);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 1rem 1.5rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.table td {
+    padding: 1rem 1.5rem;
+    vertical-align: middle;
+    color: var(--dark-text);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+.badge {
+    padding: 0.4em 0.8em;
+    font-weight: 600;
+    border-radius: var(--radius-xl);
+    letter-spacing: 0.025em;
+}
+
+/* ============================================================================
+   Alertas y Utilidades
+   ============================================================================ */
+
+.alert {
+    border-radius: var(--radius-md);
+    border: none;
+    font-weight: 500;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.alert i {
+    font-size: 1.25em;
+}
+
+.footer {
+    background-color: var(--white-bg) !important;
+    border-top: 1px solid var(--border-color);
+    color: var(--muted-text) !important;
+}
 }
 
 .form-control::placeholder {

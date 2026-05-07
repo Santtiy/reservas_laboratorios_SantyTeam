@@ -1,21 +1,24 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
-    <div class="container-fluid">
+<nav class="navbar navbar-expand-lg sticky-top">
+    <div class="container">
         <!-- Brand -->
-        <a class="navbar-brand fw-bold" href="{% url 'home' %}">
-            <i class="fas fa-flask"></i> Reservas Lab
+        <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
+            <div class="bg-primary text-white rounded p-2 me-2 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                <i class="fas fa-flask m-0" style="color: white !important;"></i>
+            </div>
+            Reservas <span class="text-primary ms-1">Lab</span>
         </a>
         
         <!-- Toggle Button -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
+        <button class="navbar-toggler border-0 shadow-none text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="fas fa-bars"></i>
         </button>
         
         <!-- Navigation Links -->
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
+            <ul class="navbar-nav ms-auto align-items-lg-center">
                 <!-- Home -->
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'home' %}">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">
                         <i class="fas fa-home"></i> Inicio
                     </a>
                 </li>
@@ -23,7 +26,7 @@
                 <!-- Reservas (solo si está logueado) -->
                 {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'reservas:reserva_list' %}">
+                        <a class="nav-link {% if 'reserva_list' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'reservas:reserva_list' %}">
                             <i class="fas fa-calendar-alt"></i> Mis Reservas
                         </a>
                     </li>
@@ -31,8 +34,8 @@
                     <!-- Nueva Reserva (Docentes) -->
                     {% if user.groups.all|length > 0 %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'reservas:reserva_create' %}">
-                                <i class="fas fa-plus"></i> Nueva Reserva
+                            <a class="nav-link {% if 'reserva_create' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'reservas:reserva_create' %}">
+                                <i class="fas fa-plus-circle"></i> Nueva Reserva
                             </a>
                         </li>
                     {% endif %}
@@ -41,42 +44,41 @@
                     {% if user.is_superuser or user.groups.filter|length > 0 %}
                         {% for group in user.groups.all %}
                             {% if group.name == "Administrador" %}
-                                <li class="nav-item">
-                                    <a class="nav-link text-warning fw-bold" href="{% url 'reservas:administracion_list' %}">
-                                        <i class="fas fa-cogs"></i> Administración
+                                <li class="nav-item ms-lg-2">
+                                    <a class="nav-link text-warning" href="{% url 'reservas:administracion_list' %}">
+                                        <i class="fas fa-cogs"></i> Admin
                                     </a>
                                 </li>
                             {% endif %}
                         {% endfor %}
                     {% endif %}
-                {% endif %}
-                
-                <!-- User Menu -->
-                {% if user.is_authenticated %}
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-user-circle"></i> {{ user.first_name|default:user.username }}
+                    
+                    <!-- User Menu -->
+                    <li class="nav-item dropdown ms-lg-3 mt-3 mt-lg-0">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="https://ui-avatars.com/api/?name={{ user.first_name|default:user.username }}&background=2563eb&color=fff&rounded=true" alt="Avatar" class="rounded-circle me-2" width="32" height="32">
+                            <span class="text-white fw-medium">{{ user.first_name|default:user.username }}</span>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" aria-labelledby="userDropdown">
                             {% if user.is_staff %}
                                 <li>
                                     <a class="dropdown-item" href="/admin/">
-                                        <i class="fas fa-cog"></i> Administración
+                                        <i class="fas fa-shield-alt text-muted"></i> Panel Django
                                     </a>
                                 </li>
                                 <li><hr class="dropdown-divider"></li>
                             {% endif %}
                             <li>
-                                <a class="dropdown-item" href="{% url 'auth:logout' %}">
+                                <a class="dropdown-item text-danger" href="{% url 'auth:logout' %}">
                                     <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
                                 </a>
                             </li>
                         </ul>
                     </li>
                 {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link btn btn-outline-light btn-sm ms-2" href="{% url 'auth:login' %}">
-                            <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                    <li class="nav-item ms-lg-3 mt-3 mt-lg-0">
+                        <a class="btn btn-primary rounded-pill px-4 shadow-sm" href="{% url 'auth:login' %}">
+                            <i class="fas fa-sign-in-alt me-1"></i> Ingresar
                         </a>
                     </li>
                 {% endif %}
