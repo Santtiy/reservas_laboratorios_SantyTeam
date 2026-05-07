@@ -39,6 +39,11 @@ class LogoutView(LogoutView):
     Vista de logout que redirige al home.
     """
     next_page = reverse_lazy('home')
+    http_method_names = ['get', 'post', 'options']
+
+    def get(self, request, *args, **kwargs):
+        """Permite hacer logout mediate una petición GET (ej. un enlace)."""
+        return self.post(request, *args, **kwargs)
 
 
 # ============================================================================
