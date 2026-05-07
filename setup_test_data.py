@@ -6,7 +6,7 @@ Uso: python manage.py shell < setup_test_data.py
 """
 
 from django.contrib.auth.models import User, Group
-from reservas_equipo.models import Laboratorio, Reserva
+from reservas_equipo.models import Reserva
 from datetime import datetime, timedelta
 
 print("\n" + "="*70)
@@ -110,50 +110,25 @@ else:
     print(f"   ℹ️  Superuser admin ya existe")
 
 # ============================================================================
-# 3. CREAR LABORATORIOS DE PRUEBA
+# 3. DEFINIR LABORATORIOS DE PRUEBA
 # ============================================================================
 
-print("\n3️⃣  Creando laboratorios...\n")
+print("\n3️⃣  Definiendo laboratorios...\n")
 
-laboratorios_data = [
-    {
-        'nombre': 'Laboratorio de Informática',
-        'descripcion': 'Lab equipado con 30 computadoras para programación',
-        'capacidad': 30,
-    },
-    {
-        'nombre': 'Laboratorio de Química',
-        'descripcion': 'Lab de química con equipos de análisis',
-        'capacidad': 20,
-    },
-    {
-        'nombre': 'Laboratorio de Física',
-        'descripcion': 'Lab de física experimental',
-        'capacidad': 25,
-    },
+laboratorios = [
+    'Laboratorio de Informática',
+    'Laboratorio de Química',
+    'Laboratorio de Física',
 ]
 
-for lab_data in laboratorios_data:
-    lab, created = Laboratorio.objects.get_or_create(
-        nombre=lab_data['nombre'],
-        defaults={
-            'descripcion': lab_data['descripcion'],
-            'capacidad': lab_data['capacidad'],
-            'activo': True,
-        }
-    )
-    if created:
-        print(f"   ✅ Laboratorio creado: {lab.nombre}")
-    else:
-        print(f"   ℹ️  Laboratorio ya existe: {lab.nombre}")
+for lab in laboratorios:
+    print(f"   ✅ Laboratorio definido: {lab}")
 
 # ============================================================================
 # 4. CREAR RESERVAS DE PRUEBA
 # ============================================================================
 
 print("\n4️⃣  Creando reservas de prueba...\n")
-
-laboratorios = Laboratorio.objects.all()
 
 # Reserva 1: Carlos - Pendiente
 if Reserva.objects.filter(usuario=usuario_docente1, estado='pendiente').count() < 2:
@@ -228,7 +203,7 @@ print(f"   - Docentes: {User.objects.filter(groups__name='Docente').count()}")
 print(f"   - Administradores: {User.objects.filter(groups__name='Administrador').count()}")
 print(f"   - Sin grupo: {User.objects.filter(groups__isnull=True).count()}")
 
-print(f"\n🏛️  Laboratorios totales: {Laboratorio.objects.count()}")
+print(f"\n🏛️  Laboratorios distintos: {Reserva.objects.values('laboratorio').distinct().count()}")
 print(f"\n📋 Reservas totales: {Reserva.objects.count()}")
 print(f"   - Pendientes: {Reserva.objects.filter(estado='pendiente').count()}")
 print(f"   - Aprobadas: {Reserva.objects.filter(estado='aprobada').count()}")

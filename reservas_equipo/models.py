@@ -4,26 +4,6 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 
 
-class Laboratorio(models.Model):
-    """
-    Modelo para representar los laboratorios disponibles.
-    Base para futuras funcionalidades de gestión de laboratorios.
-    """
-    nombre = models.CharField(max_length=100, unique=True)
-    descripcion = models.TextField(blank=True)
-    capacidad = models.IntegerField(default=1)
-    activo = models.BooleanField(default=True)
-    fecha_creacion = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        verbose_name = "Laboratorio"
-        verbose_name_plural = "Laboratorios"
-        ordering = ['nombre']
-
-    def __str__(self):
-        return self.nombre
-
-
 class Reserva(models.Model):
     """
     Modelo principal para las reservas de laboratorios.
@@ -38,7 +18,7 @@ class Reserva(models.Model):
 
     # Campos principales
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reservas')
-    laboratorio = models.ForeignKey(Laboratorio, on_delete=models.PROTECT, related_name='reservas')
+    laboratorio = models.CharField(max_length=100)
     
     # Información de la reserva
     fecha = models.DateField()
@@ -47,7 +27,7 @@ class Reserva(models.Model):
     
     # Datos administrativos
     estado = models.CharField(
-        max_length=10,
+        max_length=20,
         choices=ESTADO_CHOICES,
         default='pendiente'
     )

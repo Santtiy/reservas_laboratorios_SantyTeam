@@ -10,7 +10,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.db.models import Q
 from datetime import datetime, timedelta
 
-from .models import Reserva, Laboratorio
+from .models import Reserva
 from .forms import ReservaForm, LoginCustomForm, FiltroReservasForm
 from .mixins import (
     DoctenteMixin,
@@ -95,16 +95,14 @@ class ReservaListView(LoginRequiredMixin, ListView):
         Retorna las reservas del usuario actual.
         Puede ser filtrado si se implementan funcionalidades admin.
         """
-        queryset = Reserva.objects.filter(usuario=self.request.user).select_related(
-            'laboratorio', 'usuario'
-        )
+        queryset = Reserva.objects.filter(usuario=self.request.user)
         
         # Implementar filtros aquí (será tarea de algún miembro del equipo)
-        laboratorio_id = self.request.GET.get('laboratorio')
+        laboratorio = self.request.GET.get('laboratorio')
         estado = self.request.GET.get('estado')
         
-        if laboratorio_id:
-            queryset = queryset.filter(laboratorio_id=laboratorio_id)
+        if laboratorio:
+            queryset = queryset.filter(laboratorio__iexact=laboratorio)
         
         if estado:
             queryset = queryset.filter(estado=estado)
@@ -114,7 +112,9 @@ class ReservaListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form_filtro'] = FiltroReservasForm(self.request.GET)
-        context['laboratorios'] = Laboratorio.objects.filter(activo=True)
+        context['laboratorios'] = list(
+            Reserva.objects.values_list('laboratorio', flat=True).distinct().order_by('laboratorio')
+        )
         return context
 
 
@@ -298,7 +298,7 @@ class ReservasAdministracionListView(AdministradorMixin, ListView):
         Retorna TODAS las reservas del sistema (no filtradas por usuario).
         Soporta filtros por estado y laboratorio.
         """
-        queryset = Reserva.objects.select_related('laboratorio', 'usuario')
+        queryset = Reserva.objects.select_related('usuario')
         
         # Filtro por estado
         estado = self.request.GET.get('estado')
@@ -306,9 +306,9 @@ class ReservasAdministracionListView(AdministradorMixin, ListView):
             queryset = queryset.filter(estado=estado)
         
         # Filtro por laboratorio
-        laboratorio_id = self.request.GET.get('laboratorio')
-        if laboratorio_id:
-            queryset = queryset.filter(laboratorio_id=laboratorio_id)
+        laboratorio = self.request.GET.get('laboratorio')
+        if laboratorio:
+            queryset = queryset.filter(laboratorio__iexact=laboratorio)
         
         # Ordenar por fecha descendente
         queryset = queryset.order_by('-fecha', 'hora_inicio')
@@ -317,7 +317,9 @@ class ReservasAdministracionListView(AdministradorMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['laboratorios'] = Laboratorio.objects.filter(activo=True)
+        context['laboratorios'] = list(
+            Reserva.objects.values_list('laboratorio', flat=True).distinct().order_by('laboratorio')
+        )
         context['estados'] = Reserva.ESTADO_CHOICES
         context['estado_filtro'] = self.request.GET.get('estado', '')
         return context
@@ -422,15 +424,17 @@ class ReportesView(AdministradorMixin, TemplateView):
         # Obtener Filtros
         fecha_inicio = self.request.GET.get('fecha_inicio')
         fecha_fin = self.request.GET.get('fecha_fin')
-        laboratorio_id = self.request.GET.get('laboratorio')
+        laboratorio = self.request.GET.get('laboratorio')
         estado = self.request.GET.get('estado')
 
         # Obtener queryset filtrado centralizadamente
-        queryset = obtener_reservas_filtradas(fecha_inicio, fecha_fin, laboratorio_id, estado)
+        queryset = obtener_reservas_filtradas(fecha_inicio, fecha_fin, laboratorio, estado)
         
         # Generar estadísticas
         context['estadisticas'] = generar_estadisticas(queryset)
-        context['laboratorios'] = Laboratorio.objects.all()
+        context['laboratorios'] = list(
+            Reserva.objects.values_list('laboratorio', flat=True).distinct().order_by('laboratorio')
+        )
         context['estados'] = Reserva.ESTADO_CHOICES
         context['reservas_list'] = queryset[:50]  # Limite para la tabla de visualización
         
@@ -438,7 +442,7 @@ class ReportesView(AdministradorMixin, TemplateView):
         context['filtros'] = {
             'fecha_inicio': fecha_inicio or '',
             'fecha_fin': fecha_fin or '',
-            'laboratorio': int(laboratorio_id) if laboratorio_id and laboratorio_id.isdigit() else '',
+            'laboratorio': laboratorio or '',
             'estado': estado or '',
             'query_string': self.request.GET.urlencode(),
         }
@@ -452,10 +456,10 @@ class ExportarCSVView(AdministradorMixin, View):
     def get(self, request, *args, **kwargs):
         fecha_inicio = self.request.GET.get('fecha_inicio')
         fecha_fin = self.request.GET.get('fecha_fin')
-        laboratorio_id = self.request.GET.get('laboratorio')
+        laboratorio = self.request.GET.get('laboratorio')
         estado = self.request.GET.get('estado')
 
-        queryset = obtener_reservas_filtradas(fecha_inicio, fecha_fin, laboratorio_id, estado)
+        queryset = obtener_reservas_filtradas(fecha_inicio, fecha_fin, laboratorio, estado)
 
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = f'attachment; filename="reporte_reservas_{datetime.now().strftime("%Y%m%d_%H%M")}.csv"'
