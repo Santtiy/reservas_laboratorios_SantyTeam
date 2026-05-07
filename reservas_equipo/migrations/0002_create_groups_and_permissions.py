@@ -8,8 +8,6 @@ Descripción: Crea dos grupos:
 """
 
 from django.db import migrations
-from django.contrib.auth.models import Group, Permission
-from django.contrib.contenttypes.models import ContentType
 
 
 def create_groups_and_permissions(apps, schema_editor):
@@ -17,33 +15,34 @@ def create_groups_and_permissions(apps, schema_editor):
     Crea los grupos Docente y Administrador con sus permisos respectivos.
     """
     
-    # Obtener ContentType del modelo Reserva
-    reserva_content_type = ContentType.objects.get(
-        app_label='reservas_equipo',
-        model='reserva'
-    )
+    # Obtener modelos usando apps para compatibilidad con migraciones
+    Group = apps.get_model('auth', 'Group')
+    Permission = apps.get_model('auth', 'Permission')
+    ContentType = apps.get_model('contenttypes', 'ContentType')
+    
+    # Obtener o crear ContentType para Reserva
+    try:
+        reserva_ct = ContentType.objects.get(app_label='reservas_equipo', model='reserva')
+    except ContentType.DoesNotExist:
+        # Si no existe, crear uno
+        reserva_ct = ContentType.objects.create(
+            app_label='reservas_equipo',
+            model='reserva'
+        )
     
     # ========================================================================
     # GRUPO: DOCENTE
     # ========================================================================
     docente_group, _ = Group.objects.get_or_create(name='Docente')
     
-    # Permisos para Docente
-    docente_permisos = [
-        'add_reserva',      # Crear reservas
-        'change_reserva',   # Editar reservas propias
-        'delete_reserva',   # Eliminar reservas propias
-    ]
+    # Permisos para Docente: add, change, delete para Reserva
+    docente_permisos = Permission.objects.filter(
+        content_type=reserva_ct,
+        codename__in=['add_reserva', 'change_reserva', 'delete_reserva']
+    )
     
-    for permiso_codename in docente_permisos:
-        try:
-            permiso = Permission.objects.get(
-                content_type=reserva_content_type,
-                codename=permiso_codename
-            )
-            docente_group.permissions.add(permiso)
-        except Permission.DoesNotExist:
-            print(f"⚠️ Permiso {permiso_codename} no encontrado")
+    for permiso in docente_permisos:
+        docente_group.permissions.add(permiso)
     
     print(f"✅ Grupo Docente creado con {docente_group.permissions.count()} permisos")
     
@@ -52,23 +51,14 @@ def create_groups_and_permissions(apps, schema_editor):
     # ========================================================================
     admin_group, _ = Group.objects.get_or_create(name='Administrador')
     
-    # Permisos para Administrador
-    admin_permisos = [
-        'add_reserva',
-        'change_reserva',   # Editar cualquier reserva (aprobar/rechazar)
-        'delete_reserva',
-        'view_reserva',     # Ver detalles de reservas
-    ]
+    # Permisos para Administrador: add, change, delete, view para Reserva
+    admin_permisos = Permission.objects.filter(
+        content_type=reserva_ct,
+        codename__in=['add_reserva', 'change_reserva', 'delete_reserva', 'view_reserva']
+    )
     
-    for permiso_codename in admin_permisos:
-        try:
-            permiso = Permission.objects.get(
-                content_type=reserva_content_type,
-                codename=permiso_codename
-            )
-            admin_group.permissions.add(permiso)
-        except Permission.DoesNotExist:
-            print(f"⚠️ Permiso {permiso_codename} no encontrado")
+    for permiso in admin_permisos:
+        admin_group.permissions.add(permiso)
     
     print(f"✅ Grupo Administrador creado con {admin_group.permissions.count()} permisos")
     print("✅ MIGRACIÓN COMPLETADA: Grupos y permisos asignados correctamente")
