@@ -14,7 +14,7 @@
             <p class="text-muted">Panel exclusivo para administradores. Gestiona todas las reservas del sistema.</p>
         </div>
         <div class="col-md-4 text-end">
-            <a href="{% url 'reserva_list' %}" class="btn btn-outline-secondary">
+            <a href="{% url 'reservas:reserva_list' %}" class="btn btn-outline-secondary">
                 <i class="fas fa-arrow-left"></i> Mis Reservas
             </a>
         </div>
@@ -106,7 +106,7 @@
                         </td>
                         <td>
                             <!-- Botón Ver Detalles -->
-                            <a href="{% url 'reserva_detail' reserva.pk %}" 
+                            <a href="{% url 'reservas:reserva_detail' reserva.pk %}" 
                                class="btn btn-sm btn-info" 
                                title="Ver detalles">
                                 <i class="fas fa-eye"></i>
@@ -115,7 +115,7 @@
                             <!-- Botones de Acción (solo si está pendiente) -->
                             {% if reserva.estado == 'pendiente' %}
                                 <!-- Aprobar -->
-                                <form action="{% url 'reserva_aprobar' reserva.pk %}" method="post" style="display: inline;">
+                                <form action="{% url 'reservas:reserva_aprobar' reserva.pk %}" method="post" style="display: inline;">
                                     {% csrf_token %}
                                     <button type="submit" 
                                             class="btn btn-sm btn-success" 
@@ -126,7 +126,7 @@
                                 </form>
                                 
                                 <!-- Rechazar -->
-                                <form action="{% url 'reserva_rechazar' reserva.pk %}" method="post" style="display: inline;">
+                                <form action="{% url 'reservas:reserva_rechazar' reserva.pk %}" method="post" style="display: inline;">
                                     {% csrf_token %}
                                     <button type="submit" 
                                             class="btn btn-sm btn-danger" 

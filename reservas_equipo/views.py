@@ -136,7 +136,7 @@ class ReservaDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
     def handle_no_permission(self):
         messages.error(self.request, 'No tienes permiso para ver esta reserva.')
-        return redirect('reserva_list')
+        return redirect('reservas:reserva_list')
 
 
 class ReservaCreateView(DoctenteMixin, CreateView):
@@ -154,7 +154,7 @@ class ReservaCreateView(DoctenteMixin, CreateView):
     model = Reserva
     form_class = ReservaForm
     template_name = 'reservas/reserva_form.html'
-    success_url = reverse_lazy('reserva_list')
+    success_url = reverse_lazy('reservas:reserva_list')
 
     def form_valid(self, form):
         """Asocia automáticamente el usuario actual a la reserva."""
@@ -191,7 +191,7 @@ class ReservaUpdateView(DoctenteMixin, PropietarioReservaMixin, UpdateView):
     model = Reserva
     form_class = ReservaForm
     template_name = 'reservas/reserva_form.html'
-    success_url = reverse_lazy('reserva_list')
+    success_url = reverse_lazy('reservas:reserva_list')
 
     def test_func(self):
         """
@@ -243,7 +243,7 @@ class ReservaDeleteView(DoctenteMixin, PropietarioReservaMixin, DeleteView):
     """
     model = Reserva
     template_name = 'reservas/reserva_confirm_delete.html'
-    success_url = reverse_lazy('reserva_list')
+    success_url = reverse_lazy('reservas:reserva_list')
 
     def test_func(self):
         """
