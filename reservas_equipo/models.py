@@ -61,7 +61,7 @@ class Reserva(models.Model):
         verbose_name = "Reserva"
         verbose_name_plural = "Reservas"
         ordering = ['-fecha', 'hora_inicio']
-        unique_together = [['laboratorio', 'fecha', 'hora_inicio']]
+        # unique_together removed to allow overlapping checks via business logic
 
     def __str__(self):
         return f"{self.usuario.get_full_name()} - {self.laboratorio} - {self.fecha}"
@@ -75,6 +75,23 @@ class Reserva(models.Model):
         # Validar que no sea una fecha pasada
         if self.fecha < timezone.now().date() and self.pk is None:
             raise ValidationError("No puedes reservar para fechas pasadas.")
+
+        # Validar solapamiento de reservas: mismo laboratorio y misma fecha
+        if self.laboratorio and self.fecha and self.hora_inicio and self.hora_fin:
+            conflictos = Reserva.objects.filter(
+                laboratorio=self.laboratorio,
+                fecha=self.fecha
+            ).exclude(pk=self.pk)
+
+            for otro in conflictos:
+                # Existe solapamiento si inicio < otro.hora_fin and fin > otro.hora_inicio
+                if (self.hora_inicio < otro.hora_fin) and (self.hora_fin > otro.hora_inicio):
+                    msg = (
+                        f"Conflicto de horario con reserva existente: "
+                        f"{otro.usuario.get_full_name() or otro.usuario.username} "
+                        f"({otro.hora_inicio} - {otro.hora_fin})"
+                    )
+                    raise ValidationError(msg)
 
     def save(self, *args, **kwargs):
         """Ejecuta validaciones antes de guardar."""

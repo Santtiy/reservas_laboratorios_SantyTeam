@@ -3,105 +3,111 @@
 {% block title %}{{ titulo }} - Sistema de Reservas{% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container pb-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-light">
-                    <h2 class="mb-0">
-                        <i class="fas fa-calendar-plus"></i> {{ titulo }}
-                    </h2>
+        <div class="col-md-9 col-lg-8">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden mt-4">
+                <div class="card-header bg-primary bg-gradient text-white p-4 border-0">
+                    <h3 class="mb-0 fw-bold d-flex align-items-center">
+                        <div class="bg-white bg-opacity-25 rounded p-2 me-3 d-inline-flex">
+                            <i class="fas fa-calendar-plus text-white"></i>
+                        </div>
+                        {{ titulo }}
+                    </h3>
                 </div>
                 
-                <div class="card-body p-4">
+                <div class="card-body p-5 bg-white">
                     <form method="post" novalidate>
                         {% csrf_token %}
                         
-                        <!-- Laboratorio -->
-                        <div class="mb-3">
-                            <label for="{{ form.laboratorio.id_for_label }}" class="form-label fw-bold">
-                                <i class="fas fa-flask"></i> Laboratorio *
-                            </label>
-                            {{ form.laboratorio }}
-                            {% if form.laboratorio.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.laboratorio.errors }}
-                                </div>
-                            {% endif %}
-                        </div>
-                        
-                        <!-- Fecha -->
-                        <div class="mb-3">
-                            <label for="{{ form.fecha.id_for_label }}" class="form-label fw-bold">
-                                <i class="fas fa-calendar"></i> Fecha *
-                            </label>
-                            {{ form.fecha }}
-                            {% if form.fecha.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.fecha.errors }}
-                                </div>
-                            {% endif %}
-                        </div>
-                        
-                        <!-- Horario -->
-                        <div class="row">
+                        <div class="row g-4">
+                            <!-- Laboratorio -->
+                            <div class="col-12">
+                                <label for="{{ form.laboratorio.id_for_label }}" class="form-label text-muted small fw-bold text-uppercase tracking-wider">
+                                    <i class="fas fa-flask me-1 text-primary"></i> Laboratorio Solicitado <span class="text-danger">*</span>
+                                </label>
+                                {{ form.laboratorio }}
+                                {% if form.laboratorio.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        <i class="fas fa-exclamation-circle me-1"></i> {{ form.laboratorio.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Fecha -->
+                            <div class="col-12">
+                                <label for="{{ form.fecha.id_for_label }}" class="form-label text-muted small fw-bold text-uppercase tracking-wider">
+                                    <i class="fas fa-calendar-day me-1 text-primary"></i> Fecha de Reserva <span class="text-danger">*</span>
+                                </label>
+                                {{ form.fecha }}
+                                {% if form.fecha.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        <i class="fas fa-exclamation-circle me-1"></i> {{ form.fecha.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Horario -->
                             <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="{{ form.hora_inicio.id_for_label }}" class="form-label fw-bold">
-                                        <i class="fas fa-clock"></i> Hora Inicio *
-                                    </label>
-                                    {{ form.hora_inicio }}
-                                    {% if form.hora_inicio.errors %}
-                                        <div class="invalid-feedback d-block">
-                                            {{ form.hora_inicio.errors }}
-                                        </div>
-                                    {% endif %}
-                                </div>
+                                <label for="{{ form.hora_inicio.id_for_label }}" class="form-label text-muted small fw-bold text-uppercase tracking-wider">
+                                    <i class="fas fa-clock me-1 text-primary"></i> Hora Inicio <span class="text-danger">*</span>
+                                </label>
+                                {{ form.hora_inicio }}
+                                {% if form.hora_inicio.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        <i class="fas fa-exclamation-circle me-1"></i> {{ form.hora_inicio.errors }}
+                                    </div>
+                                {% endif %}
                             </div>
                             <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="{{ form.hora_fin.id_for_label }}" class="form-label fw-bold">
-                                        <i class="fas fa-clock"></i> Hora Fin *
-                                    </label>
-                                    {{ form.hora_fin }}
-                                    {% if form.hora_fin.errors %}
-                                        <div class="invalid-feedback d-block">
-                                            {{ form.hora_fin.errors }}
-                                        </div>
-                                    {% endif %}
-                                </div>
+                                <label for="{{ form.hora_fin.id_for_label }}" class="form-label text-muted small fw-bold text-uppercase tracking-wider">
+                                    <i class="fas fa-hourglass-end me-1 text-primary"></i> Hora Fin <span class="text-danger">*</span>
+                                </label>
+                                {{ form.hora_fin }}
+                                {% if form.hora_fin.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        <i class="fas fa-exclamation-circle me-1"></i> {{ form.hora_fin.errors }}
+                                    </div>
+                                {% endif %}
                             </div>
-                        </div>
-                        
-                        <!-- Motivo -->
-                        <div class="mb-4">
-                            <label for="{{ form.motivo.id_for_label }}" class="form-label fw-bold">
-                                <i class="fas fa-pen"></i> Motivo de la Reserva *
-                            </label>
-                            {{ form.motivo }}
-                            {% if form.motivo.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.motivo.errors }}
-                                </div>
-                            {% endif %}
+                            
+                            <!-- Motivo -->
+                            <div class="col-12">
+                                <label for="{{ form.motivo.id_for_label }}" class="form-label text-muted small fw-bold text-uppercase tracking-wider">
+                                    <i class="fas fa-pen-alt me-1 text-primary"></i> Motivo de la Reserva <span class="text-danger">*</span>
+                                </label>
+                                {{ form.motivo }}
+                                {% if form.motivo.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        <i class="fas fa-exclamation-circle me-1"></i> {{ form.motivo.errors }}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text mt-2"><i class="fas fa-info-circle"></i> Describe brevemente para qué necesitas el laboratorio.</div>
+                            </div>
                         </div>
                         
                         <!-- Non-field Errors -->
                         {% if form.non_field_errors %}
-                            <div class="alert alert-danger" role="alert">
-                                {% for error in form.non_field_errors %}
-                                    <i class="fas fa-exclamation-circle"></i> {{ error }}
-                                {% endfor %}
+                            <div class="alert alert-danger bg-danger bg-opacity-10 border-0 mt-4 d-flex align-items-center" role="alert">
+                                <i class="fas fa-exclamation-triangle fa-2x me-3 text-danger"></i>
+                                <div>
+                                    <h6 class="alert-heading fw-bold mb-1 text-danger">Atención</h6>
+                                    {% for error in form.non_field_errors %}
+                                        <p class="mb-0 small text-danger">{{ error }}</p>
+                                    {% endfor %}
+                                </div>
                             </div>
                         {% endif %}
                         
+                        <hr class="my-5 text-muted opacity-25">
+                        
                         <!-- Buttons -->
-                        <div class="d-grid gap-2 d-md-flex justify-content-end">
-                            <a href="{% url 'reservas:reserva_list' %}" class="btn btn-secondary btn-lg">
-                                <i class="fas fa-times"></i> Cancelar
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+                            <a href="{% url 'reservas:reserva_list' %}" class="btn btn-light text-secondary text-decoration-none fw-bold px-4 py-2 rounded-pill w-100 w-md-auto">
+                                <i class="fas fa-arrow-left me-2"></i> Cancelar y Volver
                             </a>
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="fas fa-save"></i> {{ boton }}
+                            <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 shadow-sm fw-bold w-100 w-md-auto">
+                                <i class="fas fa-save me-2"></i> {{ boton }}
                             </button>
                         </div>
                     </form>
@@ -109,10 +115,12 @@
             </div>
             
             <!-- Información de ayuda -->
-            <div class="alert alert-info mt-4" role="alert">
-                <i class="fas fa-info-circle"></i>
-                <strong>Información:</strong><br>
-                Tu reserva quedará en estado <strong>Pendiente</strong> hasta que sea aprobada por un administrador.
+            <div class="alert alert-info border-0 shadow-sm mt-4 rounded-3 d-flex align-items-center p-4 bg-info bg-opacity-10" role="alert">
+                <i class="fas fa-info-circle fa-2x text-info me-3"></i>
+                <div>
+                    <h6 class="fw-bold text-info mb-1">Información Importante</h6>
+                    <p class="mb-0 small text-info opacity-75">Tu reserva quedará en estado <strong>Pendiente</strong> hasta que sea revisada y aprobada por un administrador del sistema.</p>
+                </div>
             </div>
         </div>
     </div>

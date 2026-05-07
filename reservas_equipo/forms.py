@@ -54,6 +54,39 @@ class ReservaForm(forms.ModelForm):
                     'La hora de fin debe ser mayor a la hora de inicio'
                 )
 
+        # Propagar validaciones del modelo (ej. solapamientos)
+        laboratorio = cleaned_data.get('laboratorio')
+        fecha = cleaned_data.get('fecha')
+
+        # Preparar instancia temporal para validar reglas de negocio
+        try:
+            # Asignar valores a la instancia para que model.clean() pueda usarlos
+            self.instance.laboratorio = laboratorio
+            self.instance.fecha = fecha
+            self.instance.hora_inicio = hora_inicio
+            self.instance.hora_fin = hora_fin
+
+            # Llamar a clean() del modelo para detectar solapamientos
+            self.instance.clean()
+        except Exception as e:
+            # Si es ValidationError del modelo, agregar errores al formulario
+            from django.core.exceptions import ValidationError
+
+            if isinstance(e, ValidationError):
+                # Agregar como error no-field o en campos según corresponda
+                msg = e.message if hasattr(e, 'message') else e.messages
+                # Si es dict, propagar por campos
+                if hasattr(e, 'error_dict') and e.error_dict:
+                    for field, errors in e.error_dict.items():
+                        for er in errors:
+                            self.add_error(field, er)
+                else:
+                    # Agregar a non_field_errors
+                    self.add_error(None, msg)
+            else:
+                # Errores inesperados deben volver a lanzarse
+                raise
+
         return cleaned_data
 
 
