@@ -27,11 +27,28 @@
                             <i class="fas fa-calendar-alt"></i> Mis Reservas
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'reservas:reserva_create' %}">
-                            <i class="fas fa-plus"></i> Nueva Reserva
-                        </a>
-                    </li>
+                    
+                    <!-- Nueva Reserva (Docentes) -->
+                    {% if user.groups.all|length > 0 %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'reservas:reserva_create' %}">
+                                <i class="fas fa-plus"></i> Nueva Reserva
+                            </a>
+                        </li>
+                    {% endif %}
+                    
+                    <!-- Administración (solo Administradores) -->
+                    {% if user.is_superuser or user.groups.filter|length > 0 %}
+                        {% for group in user.groups.all %}
+                            {% if group.name == "Administrador" %}
+                                <li class="nav-item">
+                                    <a class="nav-link text-warning fw-bold" href="{% url 'reservas:administracion_list' %}">
+                                        <i class="fas fa-cogs"></i> Administración
+                                    </a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
                 {% endif %}
                 
                 <!-- User Menu -->

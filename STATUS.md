@@ -20,7 +20,10 @@
     ├── models.py      → Modelos base
     ├── views.py       → Vistas CBV
     ├── forms.py       → Formularios
-    └── admin.py       → Panel admin
+    ├── admin.py       → Panel admin
+    ├── mixins.py      → Mixins personalizados (NEW - ronald-auth)
+    ├── decorators.py  → Decoradores (NEW - ronald-auth)
+    └── migrations/    → Migraciones (NEW - ronald-auth)
 ```
 
 ---
@@ -31,23 +34,98 @@
 - ✅ `settings.py` - Configurado completo
 - ✅ `urls.py` - URLs principales + includes
 - ✅ `urls/auth.py` - URLs de autenticación
-- ✅ `urls/reservas.py` - URLs de reservas
+- ✅ `urls/reservas.py` - URLs de reservas (actualizado con rutas admin)
 
 ### **Lógica de Aplicación**
 - ✅ `models.py` - Laboratorio + Reserva (con validaciones)
 - ✅ `forms.py` - ReservaForm + LoginCustomForm + FiltroReservasForm
-- ✅ `views.py` - 8 vistas base (LoginView, LogoutView, ReservaListView, etc.)
+- ✅ `views.py` - 8 vistas base + 3 nuevas vistas de administración
 - ✅ `admin.py` - Panel admin personalizado
+- ✅ `mixins.py` (NEW) - Mixins de roles y permisos
+- ✅ `decorators.py` (NEW) - Decoradores para FBV
 
 ### **Templates HTML**
 - ✅ `base.html` - Template base con Bootstrap 5
-- ✅ `navbar.html` - Navbar responsivo
+- ✅ `navbar.html` - Navbar responsivo + dinámico por rol
 - ✅ `home.html` - Landing page + dashboard
 - ✅ `login.html` - Formulario de login
 - ✅ `reserva_list.html` - Listado paginado
 - ✅ `reserva_form.html` - Crear/editar reservas
 - ✅ `reserva_detail.html` - Detalle de reserva
 - ✅ `reserva_confirm_delete.html` - Confirmación de eliminación
+- ✅ `reserva_administracion_list.html` (NEW) - Panel de administración
+
+### **Migraciones y Datos**
+- ✅ `0001_initial.py` - Modelos iniciales
+- ✅ `0002_create_groups_and_permissions.py` (NEW) - Grupos y permisos
+- ✅ `setup_test_data.py` (NEW) - Script para crear datos de prueba
+
+---
+
+## 🔐 RAMA: feature/ronald-auth - SISTEMA DE AUTENTICACIÓN Y ROLES
+
+### ✨ Implementado por Ronald
+
+**Objetivo**: Sistema completo de autenticación, roles y control de acceso sin romper arquitectura existente
+
+### ✅ Completado
+
+#### 1. **Mixins Personalizados** (`mixins.py`)
+   - ✅ `RoleRequiredMixin` - Validación genérica de roles
+   - ✅ `DoctenteMixin` - Restricción para Docentes
+   - ✅ `AdministradorMixin` - Restricción para Administradores
+   - ✅ `PropietarioReservaMixin` - Validación de propiedad
+   - ✅ `PermisionRequiredMixin` - Permisos específicos Django
+   - ✅ `AuditoriaMixin` - Base para auditoría futura
+
+#### 2. **Decoradores** (`decorators.py`)
+   - ✅ `@role_required()` - Decorador genérico
+   - ✅ `@roles_required()` - Múltiples roles
+   - ✅ `@docente_required()` - Docente específico
+   - ✅ `@administrador_required()` - Admin específico
+   - ✅ `@permission_required()` - Permisos Django
+   - ✅ `@propietario_required()` - Propiedad de recurso
+
+#### 3. **Grupos y Permisos**
+   - ✅ Grupo: **Docente**
+     - Crear propias reservas
+     - Editar propias reservas (pendientes)
+     - Eliminar propias reservas (pendientes)
+   - ✅ Grupo: **Administrador**
+     - Ver todas las reservas
+     - Aprobar/Rechazar reservas
+     - Acceso total (como superuser en negocio)
+
+#### 4. **Vistas Actualizadas** (`views.py`)
+   - ✅ `ReservaCreateView` → Agregado `DoctenteMixin`
+   - ✅ `ReservaUpdateView` → Agregado `DoctenteMixin + PropietarioReservaMixin`
+   - ✅ `ReservaDeleteView` → Agregado `DoctenteMixin + PropietarioReservaMixin`
+   - ✅ `ReservaDetailView` → Mantiene funcionamiento original
+   - ✅ `ReservaListView` → Mantiene funcionamiento original
+
+#### 5. **Nuevas Vistas de Administración** (`views.py`)
+   - ✅ `ReservasAdministracionListView` - Panel admin con filtros
+   - ✅ `AprobarReservaView` - Cambiar estado a aprobada
+   - ✅ `RechazarReservaView` - Cambiar estado a rechazada
+
+#### 6. **URLs Actualizadas** (`urls/reservas.py`)
+   - ✅ Rutas de Docente (originales)
+   - ✅ Ruta `/administracion/` - Panel admin
+   - ✅ Ruta `/<id>/aprobar/` - Aprobar reserva
+   - ✅ Ruta `/<id>/rechazar/` - Rechazar reserva
+
+#### 7. **Templates**
+   - ✅ `navbar.html` - Actualizado con opciones dinámicas por rol
+   - ✅ `reserva_administracion_list.html` (NEW) - Panel profesional
+
+#### 8. **Migraciones**
+   - ✅ `0002_create_groups_and_permissions.py` - Auto-crea grupos y permisos
+
+#### 9. **Documentación**
+   - ✅ `AUTH_SYSTEM_DOCUMENTATION.md` - Doc completa del sistema
+   - ✅ `setup_test_data.py` - Script para crear datos de prueba
+
+### ✅ Verificaciones de Integridad
 
 ### **Estilos**
 - ✅ `style.css` - 350+ líneas de CSS profesional
