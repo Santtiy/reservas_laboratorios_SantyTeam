@@ -1,0 +1,87 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Detalle de Reserva - Sistema de Reservas{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h2 class="mb-0">
+                        <i class="fas fa-eye"></i> Detalle de Reserva
+                    </h2>
+                    <span class="badge bg-{{ reserva.get_estado_display_badge }} fs-6">
+                        {{ reserva.get_estado_display }}
+                    </span>
+                </div>
+                
+                <div class="card-body p-4">
+                    <!-- Información Principal -->
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">Laboratorio</h6>
+                            <p class="fs-5 fw-bold">{{ reserva.laboratorio }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">Usuario</h6>
+                            <p class="fs-5 fw-bold">{{ reserva.usuario.get_full_name|default:reserva.usuario.username }}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Información de Horario -->
+                    <div class="row mb-4">
+                        <div class="col-md-4 mb-3">
+                            <h6 class="text-muted">Fecha</h6>
+                            <p class="fs-5 fw-bold">{{ reserva.fecha|date:"d/m/Y" }}</p>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <h6 class="text-muted">Hora Inicio</h6>
+                            <p class="fs-5 fw-bold">{{ reserva.hora_inicio|time:"H:i" }}</p>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <h6 class="text-muted">Hora Fin</h6>
+                            <p class="fs-5 fw-bold">{{ reserva.hora_fin|time:"H:i" }}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Motivo -->
+                    <div class="mb-4">
+                        <h6 class="text-muted">Motivo</h6>
+                        <p>{{ reserva.motivo }}</p>
+                    </div>
+                    
+                    <!-- Metadata -->
+                    <div class="row text-muted small border-top pt-3">
+                        <div class="col-md-6">
+                            <p class="mb-0">
+                                <strong>Creado:</strong> {{ reserva.fecha_creacion|date:"d/m/Y H:i" }}
+                            </p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <p class="mb-0">
+                                <strong>Última actualización:</strong> {{ reserva.fecha_actualizacion|date:"d/m/Y H:i" }}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Acciones -->
+                    <div class="mt-4 d-flex gap-2 justify-content-end">
+                        <a href="{% url 'reservas:reserva_list' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Volver
+                        </a>
+                        {% if reserva.estado == 'pendiente' and reserva.usuario == request.user %}
+                            <a href="{% url 'reservas:reserva_update' reserva.pk %}" class="btn btn-warning">
+                                <i class="fas fa-edit"></i> Editar
+                            </a>
+                            <a href="{% url 'reservas:reserva_delete' reserva.pk %}" class="btn btn-danger">
+                                <i class="fas fa-trash-alt"></i> Eliminar
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

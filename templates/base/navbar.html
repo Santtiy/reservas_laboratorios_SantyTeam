@@ -1,0 +1,69 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+    <div class="container-fluid">
+        <!-- Brand -->
+        <a class="navbar-brand fw-bold" href="{% url 'home' %}">
+            <i class="fas fa-flask"></i> Reservas Lab
+        </a>
+        
+        <!-- Toggle Button -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <!-- Navigation Links -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <!-- Home -->
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'home' %}">
+                        <i class="fas fa-home"></i> Inicio
+                    </a>
+                </li>
+                
+                <!-- Reservas (solo si está logueado) -->
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'reservas:reserva_list' %}">
+                            <i class="fas fa-calendar-alt"></i> Mis Reservas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'reservas:reserva_create' %}">
+                            <i class="fas fa-plus"></i> Nueva Reserva
+                        </a>
+                    </li>
+                {% endif %}
+                
+                <!-- User Menu -->
+                {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle"></i> {{ user.first_name|default:user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            {% if user.is_staff %}
+                                <li>
+                                    <a class="dropdown-item" href="/admin/">
+                                        <i class="fas fa-cog"></i> Administración
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                            {% endif %}
+                            <li>
+                                <a class="dropdown-item" href="{% url 'auth:logout' %}">
+                                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-outline-light btn-sm ms-2" href="{% url 'auth:login' %}">
+                            <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,72 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Iniciar Sesión - Sistema de Reservas{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card border-0 shadow-lg">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-sign-in-alt fa-3x text-primary mb-3" style="display: block;"></i>
+                        <h2 class="card-title">Iniciar Sesión</h2>
+                        <p class="text-muted">Sistema de Reservas de Laboratorios</p>
+                    </div>
+                    
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        <!-- Username -->
+                        <div class="mb-3">
+                            <label for="{{ form.username.id_for_label }}" class="form-label">
+                                <i class="fas fa-user"></i> Usuario
+                            </label>
+                            {{ form.username }}
+                            {% if form.username.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.username.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Password -->
+                        <div class="mb-4">
+                            <label for="{{ form.password.id_for_label }}" class="form-label">
+                                <i class="fas fa-lock"></i> Contraseña
+                            </label>
+                            {{ form.password }}
+                            {% if form.password.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.password.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Form Errors -->
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger" role="alert">
+                                {% for error in form.non_field_errors %}
+                                    <i class="fas fa-exclamation-circle"></i> {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-primary w-100 btn-lg mb-3">
+                            <i class="fas fa-sign-in-alt"></i> Entrar
+                        </button>
+                    </form>
+                    
+                    <!-- Footer -->
+                    <hr>
+                    <p class="text-center text-muted small mb-0">
+                        Para soporte técnico contacta al administrador.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

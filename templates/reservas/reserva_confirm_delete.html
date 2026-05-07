@@ -1,0 +1,56 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Eliminar Reserva - Sistema de Reservas{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-danger text-white">
+                    <h2 class="mb-0">
+                        <i class="fas fa-trash-alt"></i> Eliminar Reserva
+                    </h2>
+                </div>
+                
+                <div class="card-body p-4">
+                    <div class="alert alert-warning mb-4" role="alert">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Advertencia:</strong> Esta acción no se puede deshacer.
+                    </div>
+                    
+                    <!-- Información de la Reserva -->
+                    <div class="card mb-4 border-light">
+                        <div class="card-body">
+                            <p class="mb-2">
+                                <strong>Laboratorio:</strong> {{ reserva.laboratorio }}
+                            </p>
+                            <p class="mb-2">
+                                <strong>Fecha:</strong> {{ reserva.fecha|date:"d/m/Y" }}
+                            </p>
+                            <p class="mb-0">
+                                <strong>Hora:</strong> {{ reserva.hora_inicio|time:"H:i" }} - {{ reserva.hora_fin|time:"H:i" }}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <p class="text-muted mb-4">
+                        ¿Estás seguro de que deseas eliminar esta reserva?
+                    </p>
+                    
+                    <!-- Buttons -->
+                    <form method="post" class="d-grid gap-2 d-md-flex justify-content-between">
+                        {% csrf_token %}
+                        <a href="{% url 'reservas:reserva_list' %}" class="btn btn-secondary btn-lg">
+                            <i class="fas fa-times"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-danger btn-lg">
+                            <i class="fas fa-trash-alt"></i> Sí, Eliminar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
