@@ -1,38 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Laboratorio, Reserva
-
-
-@admin.register(Laboratorio)
-class LaboratorioAdmin(admin.ModelAdmin):
-    """
-    Administración de Laboratorios.
-    Responsable: [Módulo de Administración]
-    """
-    list_display = ('nombre', 'capacidad', 'estado_badge', 'fecha_creacion')
-    list_filter = ('activo', 'fecha_creacion')
-    search_fields = ('nombre', 'descripcion')
-    ordering = ('nombre',)
-    
-    fieldsets = (
-        ('Información General', {
-            'fields': ('nombre', 'descripcion', 'capacidad')
-        }),
-        ('Estado', {
-            'fields': ('activo',)
-        }),
-    )
-    
-    def estado_badge(self, obj):
-        """Muestra el estado del laboratorio como badge."""
-        if obj.activo:
-            return format_html(
-                '<span style="background-color: #198754; color: white; padding: 5px 10px; border-radius: 3px;">Activo</span>'
-            )
-        return format_html(
-            '<span style="background-color: #dc3545; color: white; padding: 5px 10px; border-radius: 3px;">Inactivo</span>'
-        )
-    estado_badge.short_description = 'Estado'
+from .models import Reserva
 
 
 @admin.register(Reserva)
@@ -46,7 +14,7 @@ class ReservaAdmin(admin.ModelAdmin):
         'hora_inicio', 'hora_fin', 'estado_badge', 'fecha_creacion'
     )
     list_filter = ('estado', 'fecha', 'laboratorio', 'fecha_creacion')
-    search_fields = ('usuario__username', 'usuario__first_name', 'laboratorio__nombre', 'motivo')
+    search_fields = ('usuario__username', 'usuario__first_name', 'laboratorio', 'motivo')
     ordering = ('-fecha', '-hora_inicio')
     readonly_fields = ('fecha_creacion', 'fecha_actualizacion')
     

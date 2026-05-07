@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
-from .models import Reserva, Laboratorio
+from .models import Reserva
 
 
 class ReservaForm(forms.ModelForm):
@@ -14,7 +14,7 @@ class ReservaForm(forms.ModelForm):
         model = Reserva
         fields = ['laboratorio', 'fecha', 'hora_inicio', 'hora_fin', 'motivo']
         widgets = {
-            'laboratorio': forms.Select(attrs={
+            'laboratorio': forms.TextInput(attrs={
                 'class': 'form-control',
                 'required': True
             }),
@@ -115,11 +115,11 @@ class FiltroReservasForm(forms.Form):
     Formulario para filtrar reservas en el listado.
     Será usado por la vista ListView.
     """
-    laboratorio = forms.ModelChoiceField(
-        queryset=Laboratorio.objects.filter(activo=True),
+    laboratorio = forms.CharField(
         required=False,
-        widget=forms.Select(attrs={
+        widget=forms.TextInput(attrs={
             'class': 'form-control',
+            'placeholder': 'Nombre del laboratorio',
         })
     )
     fecha_desde = forms.DateField(

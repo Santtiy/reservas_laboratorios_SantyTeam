@@ -1,7 +1,7 @@
 import csv
 from django.db.models import Count
 from django.utils import timezone
-from .models import Reserva, Laboratorio
+from .models import Reserva
 from collections import Counter
 
 def generar_estadisticas(queryset):
@@ -45,7 +45,7 @@ def generar_csv_reservas(queryset, response):
         writer.writerow([
             reserva.id,
             reserva.usuario.get_full_name() or reserva.usuario.username,
-            reserva.laboratorio.nombre,
+            reserva.laboratorio,
             reserva.fecha.strftime('%Y-%m-%d'),
             reserva.hora_inicio.strftime('%H:%M:%S'),
             reserva.hora_fin.strftime('%H:%M:%S'),
@@ -54,18 +54,18 @@ def generar_csv_reservas(queryset, response):
             reserva.fecha_creacion.strftime('%Y-%m-%d %H:%M:%S')
         ])
 
-def obtener_reservas_filtradas(fecha_inicio=None, fecha_fin=None, laboratorio_id=None, estado=None):
+def obtener_reservas_filtradas(fecha_inicio=None, fecha_fin=None, laboratorio=None, estado=None):
     """
     Filtra las reservas centralizadamente.
     """
-    queryset = Reserva.objects.all().select_related('laboratorio', 'usuario')
+    queryset = Reserva.objects.all().select_related('usuario')
 
     if fecha_inicio:
         queryset = queryset.filter(fecha__gte=fecha_inicio)
     if fecha_fin:
         queryset = queryset.filter(fecha__lte=fecha_fin)
-    if laboratorio_id:
-        queryset = queryset.filter(laboratorio_id=laboratorio_id)
+    if laboratorio:
+        queryset = queryset.filter(laboratorio__iexact=laboratorio)
     if estado:
         queryset = queryset.filter(estado=estado)
         

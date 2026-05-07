@@ -30,9 +30,9 @@
                     <select class="form-select" id="id_laboratorio" name="laboratorio">
                         <option value="">-- Todos los laboratorios --</option>
                         {% for lab in laboratorios %}
-                            <option value="{{ lab.id }}" 
-                                {% if lab.id|stringformat:"s" == request.GET.laboratorio %}selected{% endif %}>
-                                {{ lab.nombre }}
+                            <option value="{{ lab }}" 
+                                {% if lab == request.GET.laboratorio %}selected{% endif %}>
+                                {{ lab }}
                             </option>
                         {% endfor %}
                     </select>
@@ -81,7 +81,7 @@
                             <br>
                             <small class="text-muted">{{ reserva.usuario.email }}</small>
                         </td>
-                        <td>{{ reserva.laboratorio.nombre }}</td>
+                        <td>{{ reserva.laboratorio }}</td>
                         <td>
                             <i class="fas fa-calendar"></i>
                             {{ reserva.fecha|date:"d/m/Y" }}
